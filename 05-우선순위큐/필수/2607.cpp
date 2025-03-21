@@ -9,33 +9,31 @@
 
 using namespace std;
 
-// 정말 죄송하지만 도저히 모르겠어서 틀린 상태로 제출합니다... 죄송해요...
+vector<int> origin;
 
-map<char, int> makeMap(const string& s) {
-	map<char, int> mp;
-	for (char c : s) {
-		mp[c]++;
+vector<int> cntAlpha(string s) {
+	vector<int> v(26);
+
+	for (auto c : s) {
+		v[c - 'A']++;
 	}
-	return mp;
+
+	return v;
 }
 
-bool isOneDiff(const map<char, int>& big, const map<char, int>& small) {
-	int chk = 0;
-	for (auto& ent : big) {
-		char c = ent.first;
-		int countBig = ent.second;
-		int countSmall = small.count(c);
+bool isSimilar(string s) {
+	vector<int> cmp = cntAlpha(s);
+	vector<int> vc;
 
-		if (countBig - countSmall == 1) {
-			chk++;
-		}
-		else {
-			return false;
+	for (int i = 0; i < 26; i++) {
+		if (cmp[i] != origin[i]) {
+			vc.push_back(cmp[i] - origin[i]);
 		}
 	}
-
-
-	if (chk == 1) return true;
+	if (vc.empty()) return true;
+	if (vc.size() == 1 && abs(vc[0]) == 1) return true;
+	if (vc.size() == 2 && abs(vc[0]) == 1 && vc[0] + vc[1] == 0) return true;
+	return false;
 }
 
 int main() {
@@ -43,46 +41,22 @@ int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	map<char, int> st;
-	string str, cmp;
 	int n;
 	int check = 0;
+	string input;
 
 	cin >> n;
+	cin >> input;
 
-	cin >> str;
-
-	st = makeMap(str);
+	origin = cntAlpha(input);
 
 	for (int i = 1; i < n; i++) {
+		string inp;
+		cin >> inp;
 
-		cin >> cmp;
-
-		map<char, int> cp = makeMap(cmp);
-
-		if (str.size() == cmp.size() && cp == st) {
+		if (isSimilar(inp)) {
 			check++;
-			cout << "1\n";
-			continue;
 		}
-
-		if (str.size() - cmp.size() == -1) {
-			if (isOneDiff(cp, st)) {
-				check++;
-				cout << "2\n";
-				continue;
-			}
-		}
-
-		if (str.size() - cmp.size() == 1) {
-			if (isOneDiff(st, cp)) {
-				check++;
-				cout << "3\n";
-				continue;
-			}
-		}
-
-
 	}
 	cout << check;
 }
